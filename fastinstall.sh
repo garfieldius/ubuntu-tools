@@ -32,6 +32,9 @@ add-apt-repository ppa:nginx/$nginx
 apt-get update 
 apt-get install nginx mariadb-server-5.2 php5-cgi php5-cli php5-curl php5-gd php5-mysql php5-xcache php-pear php5-dev graphicsmagick ghostscript
 
+
+
+
 # Configure PHP extensions
 pecl install igbinary
 
@@ -96,4 +99,15 @@ pear upgrade-all
 # Configure base TYPO3 host
 wget https://github.com/Trenker/ubuntu-tools/raw/master/tools/default-host.conf
 mv default-host.conf /etc/nginx/sites-enabled
+
+# configure nginx
+sed -i "s,worker_processes 4;,worker_processes 10;,g" /etc/nginx/nginx.conf
+sed -i "s,	worker_connections 768;,	worker_connections 1024;,g" /etc/nginx/nginx.conf
+sed -i "s,keepalive_timeout 65;keepalive_timeout 30;,g" /etc/nginx/nginx.conf
+sed -i "s,access_log /var/log/nginx/access.log; access_log off;,g" /etc/nginx/nginx.conf
+sed -i "s,	# gzip,	gzip,g" /etc/nginx/nginx.conf
+sed -i "s,# server_tokens off; server_tokens off;,g" /etc/nginx/nginx.conf
+
+/etc/init.d/nginx restart
+
 
