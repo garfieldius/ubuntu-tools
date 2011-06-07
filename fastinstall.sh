@@ -102,10 +102,11 @@ mv default-host.conf /etc/nginx/sites-enabled
 
 # configure nginx
 sed -i "s,worker_processes 4;,worker_processes 10;,g" /etc/nginx/nginx.conf
-sed -i "s,	worker_connections 768;,	worker_connections 1024;,g" /etc/nginx/nginx.conf
+sed -i "s,	worker_connections 768;,	worker_connections 1024;\nworker_rlimit_nofile 8192;,g" /etc/nginx/nginx.conf
 sed -i "s,keepalive_timeout 65;keepalive_timeout 30;,g" /etc/nginx/nginx.conf
 sed -i "s,access_log /var/log/nginx/access.log; access_log off;,g" /etc/nginx/nginx.conf
 sed -i "s,	# gzip,	gzip,g" /etc/nginx/nginx.conf
+sed -i "s, gzip on;,gzip on;\n gzip_static on;,g" /etc/nginx/nginx.conf
 sed -i "s,# server_tokens off; server_tokens off;,g" /etc/nginx/nginx.conf
 
 /etc/init.d/nginx restart
