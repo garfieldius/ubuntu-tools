@@ -13,7 +13,10 @@
 # This script makes use of his work, as published under BSD license at https://github.com/till/ubuntu
 
 # Wee need to be the root of all evil
-sudo -s
+if [ $(id -u) != "0" ]; then
+	echo "You must run this as root, try sudo sh"
+	exit 1
+fi
 
 # Add MariaDB repository
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1BB943DB
@@ -74,8 +77,16 @@ sed -i "s,max_execution_time = 30,max_execution_time = 60,g" $php_ini
 # fix ubuntu fuck ups
 sed -i "s,magic_quotes_gpc = On,magic_quotes_gpc = Off,g" $php_ini
 
-# don't stat on each access
+# configure xcache
+PROC_COUNT=`cat /proc/cpuinfo |grep -c processor`
 sed -i "s,xcache.stat   =               On,xcache.stat   =               Off,g" /etc/php5/conf.d/xcache.ini
+sed -i "s,xcache.size  =                16M,xcache.size  =                32M,g" /etc/php5/conf.d/xcache.ini
+sed -i "s,xcache.count =                 1,xcache.count =                 $PROC_COUNT,g" /etc/php5/conf.d/xcache.ini
+sed -i "s,xcache.slots =                8K,xcache.slots =                32K,g" /etc/php5/conf.d/xcache.ini
+sed -i "s,xcache.var_size  =                0M,xcache.size  =                64M,g" /etc/php5/conf.d/xcache.ini
+sed -i "s,xcache.var_count =                 1,xcache.count =                 $PROC_COUNT,g" /etc/php5/conf.d/xcache.ini
+sed -i "s,xcache.var_slots =                8K,xcache.slots =                32K,g" /etc/php5/conf.d/xcache.ini
+sed -i "s,xcache.var_gc_interval =     300,xcache.var_gc_interval =     7200,g" /etc/php5/conf.d/xcache.ini
 
 # update PEAR
 pear channel-update pear.php.net
