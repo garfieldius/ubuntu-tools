@@ -45,7 +45,10 @@ echo "igbinary.compact_strings=Off" > /etc/php5/conf.d/igbinary.ini
 wget https://github.com/till/ubuntu/raw/master/php-fcgid/php-fcgid
 
 # Configure
-sed 's/"johndoe jandoe"/"www-data"/' php-fcgid | sed 's/"2"/"10"/' - | sed 's/"100"/"1000"/' - > php-fcgid
+sed -i 's/"johndoe jandoe"/"www-data"/' php-fcgid
+sed -i 's/"2"/"10"/' php-fcgid
+sed -i 's/"100"/"1000"/' php-fcgid
+
 chmod +x php-fcgid
 mv php-fcgid /etc/init.d
 update-rc.d php-fcgid defaults
@@ -110,5 +113,8 @@ sed -i "s, gzip on;,gzip on;\n gzip_static on;,g" /etc/nginx/nginx.conf
 sed -i "s,# server_tokens off; server_tokens off;,g" /etc/nginx/nginx.conf
 
 /etc/init.d/nginx restart
+
+
+
 
 
