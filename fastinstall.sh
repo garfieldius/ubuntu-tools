@@ -30,7 +30,7 @@ add-apt-repository ppa:nginx/$nginx
 
 # Install components
 apt-get update 
-apt-get install nginx mariadb-server-5.2 php5-cgi php5-cli php5-curl php5-gd php5-mysql php5-xcache php-pear php5-dev graphicsmagick ghostscript
+apt-get install nginx mariadb-server-5.2 php5-cgi php5-cli php5-curl php5-gd php5-mysql php5-xcache php-pear php5-dev graphicsmagick ghostscript git
 
 
 
@@ -115,6 +115,29 @@ sed -i "s,# server_tokens off; server_tokens off;,g" /etc/nginx/nginx.conf
 /etc/init.d/nginx restart
 
 
+# Add TYPO3
+cd /var/www
+rm *
+wget http://mesh.dl.sourceforge.net/project/typo3/TYPO3%20Source%20and%20Dummy/TYPO3%204.5.3/blankpackage-4.5.3.tar.gz
+tar xzf blankpackage-4.5.3.tar.gz
+rm -r default
+mv blankpackage-4.5.3 default
+cd default 
+rm index.php t3lib typo3 typo3_src typo3_src-4.5.3
+
+cd ..
+git clone git://git.typo3.org/TYPO3v4/Core.git typo3-core
+cd typo3-core
+git checkout TYPO3_4-5
+
+cd ../default
+ln -s ../typo3-core/t3lib
+ln -s ../typo3-core/typo3
+ln -s ../typo3-core/index.php
+chmod -R g+w fileadmin typo3temp typo3conf uploads
+
+chown -hR $www_user:$www_user /var/www/default
+echo "Everything is installed, please go to http://DOMAIN.TLD/typo3/install to install and configure your TYPO3"
 
 
 
